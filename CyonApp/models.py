@@ -106,8 +106,8 @@ class ReservationDetailsGuest(BaseModel):
 if __name__ == '__main__':
     with app.app_context():
         pass
-        # db.drop_all()
-        # db.create_all()
+        db.drop_all()
+        db.create_all()
         import hashlib
         password = "cyon"
         password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
