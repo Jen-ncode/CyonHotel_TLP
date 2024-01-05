@@ -1,0 +1,18 @@
+{% extends 'admin/base.html' %}
+{% block body %}
+<h1 class="text-center">Thiết lập quy định</h1>
+<div class="container">
+    <form class="" method="post" action="{{url_for('change_rule')}}">
+        <div class="mb-3 mt-3">
+            <label for="surcharge">Phụ thu khi khách quá 2</label>
+            <input type="number" min="0.0" step="0.01" value={{surcharge}} class="form-control" id="surcharge" placeholder="Nhập phụ thu" name="surcharge" required/>
+        </div>
+        <div class="mt-3 mb-3">
+            <label for="factor">Hệ số giá khi có khách nước ngoài</label>
+            <input type="number" min="0.0" step="0.01" value={{factor}} class="form-control" id="factor" placeholder="Nhập hệ số" name="factor"
+                   required/>
+        </div>
+        <input type="submit" value="Lưu" class="btn btn-primary">
+    </form>
+</div>
+{% endblock %}

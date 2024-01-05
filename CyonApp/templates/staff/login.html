@@ -1,0 +1,55 @@
+{% extends 'layout/base.html'%}
+{% block header %}
+{% endblock %}
+
+{% block title %}Staff Login{% endblock %}
+
+{% block content %}
+<form class="p-3 vw-100 vh-100 my-bg-3" method="post" action="{{url_for('staff_login')}}">
+    <div class="d-flex bg-white m-0 row w-100 h-100 shadow rounded-3">
+        <div class="bg col-5 p-0 rounded-3 shadow">
+        </div>
+        <div class="col-7 p-5">
+            <div class="h3 text-center">Welcome to Cyon Hotel</div>
+            <div class="container" style="width: 100%">
+                <div class="input-group shadow-sm my-3 bg-white rounded-2">
+                                    <span class="input-group-text border-0 rounded-0 my-icon-input bg-transparent">
+                                        <i class="fa-solid fa-user"></i>
+                                    </span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control shadow-none border-0 rounded-0 bg-transparent"
+                               id="username"
+                               placeholder="Enter username" name="username">
+                        <label for="username">Tên đăng nhập</label>
+                    </div>
+                </div>
+
+                <div class="input-group shadow-sm my-3 bg-white rounded-2">
+                                    <span class="input-group-text border-0 rounded-0 my-icon-input bg-transparent">
+                                        <i class="fa-solid fa-key"></i>
+                                    </span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control shadow-none border-0 rounded-0 bg-transparent"
+                               id="password" placeholder="Enter password" name="password">
+                        <label for="password">Mật khẩu</label>
+                    </div>
+                </div>
+                {% if err_msg %}
+                <div class="text-danger">
+                    <h6> {{ err_msg }}</h6>
+                </div>
+                {% endif %}
+                <div class="py-2 text-center d-flex flex-wrap justify-content-center">
+                    <input type="submit" class="btn w-100 h-100 my-btn my-3" value="Đăng nhập"/>
+                    <a href="#" class="mb-3 link-secondary text-decoration-none">Quên mật khẩu</a>
+                    <span style="height: 1px" class="w-100 border-bottom border-dark"></span>
+                    <input type="button" class="btn h-100 my-sub-btn my-3" value="Tạo tài khoản"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

@@ -1,0 +1,13 @@
+.my-spinner {
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999999999999;
+    position: fixed;
+    background: transparent;
+}
+
+.my-spinner div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}

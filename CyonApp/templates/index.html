@@ -1,0 +1,156 @@
+{%extends 'layout/base.html' %}
+
+{% block content%}
+<div id="carouselExampleControlsNoTouching" class="carousel slide position-relative" data-bs-interval="3000"
+     data-bs-ride="carousel">
+    <!-- The slideshow/carousel -->
+    <div class="carousel-inner">
+        <div class="carousel-item vw-100 vh-100 active bg-dark">
+            <div class="overlay-image"
+                 style="background-image: url({{ url_for('static', filename='src/top1.jpg') }})"></div>
+            <div class="d-flex flex-wrap justify-content-center position-absolute top-50 start-50 translate-middle text-white zindex-dropdown">
+             <img src="{{ url_for('static', filename='src/logo.png') }}" style="width: 30%"/>
+                <p class="text-center w-100 m-0 p-3 pb-1 display-5 font-title">Cyon Hotel</p>
+                <p class="text-center w-100 m-0 p-0 display-6 font-sub-title">Hotel & Resort</p>
+            </div>
+        </div>
+
+        <div class="carousel-item vw-100 vh-100 bg-dark">
+            <div class="overlay-image"
+                 style="background-image: url({{ url_for('static', filename='src/top2.jpg') }})"></div>
+            <div class="d-flex flex-wrap justify-content-center position-absolute top-50 start-50 translate-middle text-white zindex-dropdown">
+                <p class="text-center w-100 m-0 p-3 pb-1 display-4 font-title">Experience something</p>
+                <p class="text-center w-100 m-0 p-0 display-2 font-sub-title">new every moment</p>
+            </div>
+        </div>
+
+        <div class="carousel-item vw-100 vh-100 bg-dark">
+            <div class="overlay-image"
+                 style="background-image: url({{ url_for('static', filename='src/top3.jpg') }})"></div>
+            <div class="d-flex flex-wrap justify-content-center position-absolute top-50 start-50 translate-middle text-white zindex-dropdown">
+                <p class="text-center w-100 m-0 p-3 pb-1 display-4 font-title">BOOK NOW FOR</p>
+                <p class="text-center m-0 p-0 display-5 font-title" style="background-color: var(--base-color-darker-a)">25% OFF</p>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching"
+            data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching"
+            data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!--Booking form-->
+<form class="position-absolute w-100 p-3 bottom-0 form-booking" id="booking-table">
+    <div class="container p-lg-5 p-sm-2">
+        <div class="row mx-auto p-3 border-5 border-danger booking-table shadow justify-content-between">
+            <div class="col-lg-5 col-sm-12 py-2 text-center">
+                <div>
+                    <label for="check-in" class="form-lable" style="color: wheat;"> Check-in</label>
+                    <input id="check-in" value={{ d1 }} type="date" class="form-control shadow-none border-0 my-bg-3" name="check-in">
+                </div>
+            </div>
+            <div class="col-lg-5 col-sm-12 py-2 text-center">
+                <div>
+                    <label for="check-out" class="form-lable" style="color: wheat;">Check-out</label>
+                    <input id="check-out" value={{ d2 }} min={{ d2 }} type="date" class="form-control shadow-none border-0 my-bg-3" name="check-out">
+                </div>
+            </div>
+            <div class="col-lg-2 col-sm-12 py-2 text-center d-flex">
+                <input type="button" onclick="goToBook()" class="btn w-100 h-100 btn-booking-table" style="color: wheat;" value="BOOK NOW"/>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!--Body-->
+<div class="container-fluid content p-5">
+    <div class="row justify-content-evenly ">
+        <div class="col-lg-5 col-sm-12 d-flex flex-column justify-content-center">
+            <div class="h1 display-6 font-title text-center mt-4">THE HOTEL</div>
+            <p>Cyon Hotel được thành lập vào năm 1993, tọa lạc tại Vũng Tàu, Việt Nam. Bao gồm 8 tầng và 65 phòng được bố
+                trí với đồ nội thất cao cấp và hiện đại. Với kiến trúc kết hợp giữa gỗ thông và đá cẩm thạch mang lại vẻ
+                ngoài hiện đại vừa hoang dã.</p>
+
+        </div>
+        <div class="col-lg-5 col-sm-12">
+            <div>
+                <img class="w-100"
+                     src="https://iconsaigonhotel.com/wp-content/uploads/2023/03/TOM6556-1.jpg"
+                     alt=""/>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid my-bg p-5">
+    <div class="row justify-content-evenly ">
+        <div class="col-lg-5 col-sm-12">
+            <div>
+                <img class="w-100"
+                     src="https://iconsaigonhotel.com/wp-content/uploads/2019/11/senior.jpg"
+                     alt=""/>
+
+            </div>
+        </div>
+        <div class="col-lg-5 col-sm-12 d-flex flex-column justify-content-center">
+            <div class="h1 display-6 font-title text-center mt-4">ROOMS & SUITES</div>
+            <p>Các phòng và suites ở Cyon Hotel  đều được trang bị đầy đủ các tiện nghi để bạn nghỉ ngơi, thư giãn sau
+                những giờ đi tham quan và vui chơi tại Vũng Tàu. </p>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid p-5">
+    <div class="row justify-content-evenly ">
+        <div class="col-lg-5 col-sm-12 d-flex flex-column justify-content-center">
+            <div class="h1 display-6 font-title text-center mt-4">SERVICES</div>
+            <p>Chúng tôi đặc biệt chú trọng đến sức khỏe của khách hàng. Thực phẩm ở Cyon Hotel đều phải thật sạch và
+                chất lượng. chúng tôi cung cấp các dịch vụ thư giãn như spa, xông hơi. Ngoài ra, Cyon Hotel còn có các
+                phòng yoga, phòng gym để phục vụ nhu cầu rèn luyện thể chất của khách hàng.</p>
+
+        </div>
+        <div class="col-lg-5 col-sm-12">
+            <div>
+                <div id="demo" class="carousel slide" data-bs-ride="carousel">
+
+                    <!-- Indicators/dots -->
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+                        <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+                    </div>
+
+                    <!-- The slideshow/carousel -->
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img class="w-100 h-100"
+                                 src="https://iconsaigonhotel.com/wp-content/uploads/2019/11/lobby2.jpg"
+                                 alt=""/>
+                        </div>
+                        <div class="carousel-item">
+                            <img class="w-100 h-100"
+                                 src="https://iconsaigonhotel.com/wp-content/uploads/2023/03/TOM5809.jpg"
+                                 alt=""/>
+                        </div>
+                        <div class="carousel-item">
+                            <img class="w-100 h-100"
+                                 src="https://iconsaigonhotel.com/wp-content/uploads/2023/03/TOM6545-1.jpg"
+                                 alt=""/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

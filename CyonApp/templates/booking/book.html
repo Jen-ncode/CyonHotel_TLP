@@ -1,0 +1,125 @@
+{%extends 'layout/base.html' %}
+
+{% block extra %}
+<link href="{{ url_for('static', filename='css/booking.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content%}
+<div class="container-fluid p-3 vw-100 my-bg-3">
+    <form class="w-100 d-flex justify-content-evenly flex-wrap">
+        <div class="col-12 py-2 text-center d-flex justify-content-center">
+            <div class="col-6 col-md-5 text-center">
+                <div>
+                    <input id="check-in" value={{check_in}} min={{min_check_in}} type="date"
+                           class="form-control shadow-none border-0 text-center"
+                           name="check-in">
+                </div>
+            </div>
+            <div class="col-1 text-center d-flex">
+                <span class="m-auto my-text-color fw-bolder"><i class="fa-solid fa-arrow-right-long"></i></span>
+            </div>
+            <div class="col-6 col-md-5 text-center">
+                <div>
+                    <input id="check-out" value={{check_out}} min={{min_check_out}} type="date"
+                           class="form-control shadow-none border-0 text-center" name="check-out">
+                </div>
+            </div>
+        </div>
+        <div class="col-12 py-2 text-center d-flex justify-content-center">
+            <div class="col-3 col-md-2 form-floating">
+                <input type="text" class="form-control" value="{{kw}}"
+                       id="keyword" placeholder="Nhập tên phòng" name="keyword">
+                <label for="keyword">Từ khóa</label>
+            </div>
+            <div class="col-3 col-md-2 form-floating">
+                <input type="number" class="form-control" value="{{min_price}}" min="100000" id="min-price"
+                       placeholder="Giá từ" name="min-price">
+                <label for="min-price">Giá tối thiểu</label>
+            </div>
+            <div class="col-3 col-md-2 form-floating">
+                <input type="number" class="form-control" value="{{max_price}}" min="100000" id="max-price"
+                       placeholder="Giá từ" name="max-price">
+                <label for="min-price">Giá tối đa</label>
+            </div>
+            <div class="col-3 col-md-2 form-floating">
+                <input type="number" class="form-control" value="{{num_of_guests}}" min="1" id="num-of-guests"
+                       placeholder="Số khách" name="num-of-guests">
+                <label for="num-of-guests">Số khách</label>
+            </div>
+        </div>
+        <div class="col-12 col-md-2 col-sm-5 py-2 text-center d-flex">
+            <input type="button" onclick="setDate()" class="btn w-100 h-100 my-bg-4" value="Tìm kiếm"/>
+        </div>
+    </form>
+</div>
+
+<div class="container-fluid d-flex flex-wrap p-3 justify-content-evenly">
+    <div class="col-md-8 col-12">
+        <div class="container">
+            {% for r in rt %}
+            <div class="row my-3 d-flex flex-wrap justify-content-between">
+                <div class="col-md-4 col-12 p-2">
+                    <img src="{{r.image}}" class="img-fluid"/>
+                </div>
+                <div class="col-md-6 col-12 p-2">
+                    <h5 class="font-title fw-bold text-dark">{{r.name}}</h5>
+                    <p class="m-0">Số khách: 1-{{r.max_people}}</p>
+                    <p class="m-0">Giá: {{ "{:,.0f}".format(r.price*days) }} VNĐ</p>
+                    <p class="m-0 text-secondary">Số phòng trống: {{r.available}}</p>
+                </div>
+                <div class="col-md-2 col-12 p-2 d-flex">
+                    <a href="javascript:;"
+                       class="w-100 m-auto d-block p-2 my-bg-2 text-center text-decoration-none text-dark"
+                       onclick="bookRoom({{r.id}}, '{{r.name}}', {{r.price*days}}, {{r.max_people}})">Đặt phòng</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="col-md-3 col-12">
+        <div class="my-bill my-3 " style="border: 1px solid var(--base-color-darker)">
+            <div class="my-bg-3 p-3">
+                <h3 class="font-title">Tổng tiền</h3>
+                <span class="total-quantity">{{total_quantity}} phòng</span>
+                <p class="total-amount">{{ "{:,.0f}".format(total_amount) }} VNĐ</p>
+                <button class="btn w-100 h-100 mx-6 rounded-0 btn-continue d-flex justify-content-between"
+                        onclick="continueBook()"> Tiếp tục
+                    <i class="fa-solid fa-chevron-right my-auto"></i>
+                </button>
+            </div>
+            <div class="px-2" id="list-cart">
+                {% for r in session['cart'].values() %}
+                <div class="p-3 border-bottom" id="cart-room-{{r.id}}">
+                    <h6 class="font-title fw-bold d-flex justify-content-between">{{r.name}}
+                        <a href="javascript:;" class="text-decoration-none" style="color: var(--base-color-darker)"
+                           onclick="deleteCart({{r.id}})">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    </h6>
+                    <div class="my-2">
+                        <button type="button" class="decrease-amount text-dark"
+                                onclick="decreaseAmount({{r.id}}, this)"> -
+                        </button>
+                        <input type="number" value={{r.quantity}} min=1 max=3
+                               class="ip-simple text-center text-dark hide-arrow" readonly>
+                        <button type="button" class="increase-amount text-dark"
+                                onclick="increaseAmount({{r.id}}, this)"> +
+                        </button>
+                    </div>
+                    <div>
+                        <span class="price">{{"{:,.0f}".format(r.price*r.quantity)}} VNĐ</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script%}
+<script src="{{ url_for('static', filename='js/book.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nav2.js') }}"></script>
+{% endblock %}

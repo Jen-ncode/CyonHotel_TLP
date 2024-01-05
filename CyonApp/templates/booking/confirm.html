@@ -1,0 +1,140 @@
+{%extends 'layout/base.html' %}
+
+{% block extra %}
+<link href="{{ url_for('static', filename='css/booking.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content%}
+<div id="my-spinner" class="my-spinner d-none">
+    <div class="spinner-border"></div>
+</div>
+<div class="row m-0 d-flex justify-content-evenly">
+    <div class="col-12 col-md-10 mt-4 my-bg shadow rounded-4 p-4 border border-white">
+        <h6 class="text-uppercase fw-bold">Thông tin liên lạc</h6>
+        <div class="px-4 mb-3">
+            <div>
+                <span>Họ tên: </span> <span>{{session["orderer"].name}}</span>
+            </div>
+
+            <div>
+                <span>Email: </span> <span>{{session["orderer"].email}}</span>
+            </div>
+        </div>
+
+        <h6 class="text-uppercase fw-bold">Thông tin phiếu đặt</h6>
+        <div class="px-4 py-3 mb-3 my-bg-3 shadow-sm rounded-3">
+            <div class="row">
+                <div class="col-md-4 col-5 fw-bold">Ngày nhận phòng:</div>
+                <div class="col-md-7 col-5 p-0">
+                    <input class="border-0 my-bg-3" type="date" readonly
+                           value="{{session['date']['check-in']}}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5 fw-bold">Ngày trả phòng:</div>
+                <div class="col-md-7 col-5 p-0">
+                    <input class="border-0 my-bg-3" type="date" readonly
+                           value="{{session['date']['check-out']}}">
+                </div>
+            </div>
+            <div>
+                <div class="fw-bold">Phòng đã đặt:</div>
+                <div class="p-3">
+                    {% for r in session['details'] %}
+                    <div class="row w-100">
+                        <div class="col-md-4">{{session['details'][r]["name"]}}</div>
+                        <div class="col-md-5">{{"{:,.0f}".format(session['details'][r]["total"])}} VNĐ</div>
+                        <div class="col-md-3">
+                            <a href="#{{r.replace(' ','-')}}" data-bs-toggle="collapse"
+                               class="text-decoration-none text-secondary">
+                                Chi tiết +
+                            </a>
+                        </div>
+                    </div>
+                    <div id="{{r.replace(' ','-')}}" class="collapse">
+                        <div class="row">
+                            <div class="col-md-4">Phụ thu:</div>
+                            <div class="col-md-8">
+                                {% if "surcharge" in session['details'][r] %}
+                                {{"{:,.0f}".format(session['details'][r]["surcharge"])}}
+                                {% else %}
+                                0
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Hệ số:</div>
+                            <div class="col-md-8">
+                                {% if "foreigner" in session['details'][r] %}
+                                {{session['details'][r]["foreigner"]}}
+                                {% else %}
+                                1
+                                {% endif %}
+                            </div>
+                        </div>
+                        <table class="table table-hover">
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Giới tính</th>
+                                <th>Loại khách</th>
+                                <th>CMMD/CCCD</th>
+                                <th>Địa chỉ</th>
+                            </tr>
+                            {% for g in session['details'][r]["guests"].values() %}
+                            <tr>
+                                <td>{{ g.name }}</td>
+                                <td>
+                                    {% if g.gender == '1' %}
+                                    Nam
+                                    {% else %}
+                                    Nữ
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if g.type == '1' %}
+                                    Nội địa
+                                    {% else %}
+                                    Nước ngoài
+                                    {% endif %}
+                                </td>
+                                <td>{{g.identity_number}}</td>
+                                <td>{{g.address}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-5 fw-bold">Tổng tiền:</div>
+                <div class="col-md-7 col-5 p-0">
+                    {{"{:,.0f}".format(total)}} VNĐ
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <a href="javascript:;" type="button" class="btn mx-6 rounded-2 btn-continue d-flex justify-content-between"
+               onclick="confirmReservation()">
+                Xác nhận
+                <i class="fa-solid fa-chevron-right my-auto"></i>
+            </a>
+        </div>
+        <div class="">
+            <a href="/" type="button" class="btn btn-light mx-6 mt-3 rounded-2 my-bg-3 d-flex justify-content-between"
+               onclick="">
+                <i class="fa-solid fa-chevron-left my-auto"></i>
+                Hủy
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block script%}
+<script src="{{ url_for('static', filename='js/nav2.js') }}"></script>
+<script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,136 @@
+{%extends 'layout/base.html' %}
+
+
+{% block extra %}
+<link href="{{ url_for('static', filename='css/booking.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+
+{% block content%}
+<div class="container-fluid d-flex flex-wrap p-3 justify-content-evenly">
+    <div class="col-md-8 col-12">
+        <form method="post" class="row my-3">
+            <div class="my-bg-3 d-flex p-3">
+                <div class=" col-8 d-flex">
+                    <label for="guest-amount" class="form-lable d-flex" style="align-items: center">Số khách: </label>
+                    <input id="guest-amount" value={{ guest_amount }} min={{ min_guests }} max={{ max_guests }}
+                           type="number" class="form-control shadow-none border-0" style="width: fit-content"
+                           name="guest-amount">
+                </div>
+                <div class="col-4 sd-flex">
+                    <input type="submit" class="btn my-bg-4" value="Xác nhận"/>
+                </div>
+            </div>
+        </form>
+        <form action="/" id="guests-info-form">
+            <div id="ContactInfo" class="input-group shadow-sm my-3 bg-white rounded-2 p-3">
+                <div class="mt-3 fw-bold">Thông tin người đặt</div>
+                <div class="form-floating m-3 w-100">
+                    <input required type="text" class="form-control" id="name" placeholder="Nhập họ tên"
+                           name="name">
+                    <label for="name">Họ tên</label>
+                </div>
+                <div class="form-floating m-3 w-100">
+                    <input required type="email" class="form-control" id="email" placeholder="Nhập email"
+                           name="email" onchange="verify(this)">
+                    <label for="email">Email</label>
+                </div>
+            </div>
+            {% for i in range(guest_amount) %}
+            <div id="guest-{{i+1}}" class="input-group shadow-sm my-3 bg-white rounded-2 p-3">
+                <div class="mt-3 fw-bold">Khách hàng {{i+1}}</div>
+                <div class="form-floating m-3 w-100">
+                    <input required type="text" class="form-control" id="name-{{i+1}}" placeholder="Nhập họ tên"
+                           name="name">
+                    <label for="name-{{i+1}}">Họ tên</label>
+                </div>
+                <select required class="form-select m-3 w-25" name="gender-{{i+1}}" id="gender-{{i+1}}" aria-label="Giới tính">
+                    <option value="" selected>Giới tính</option>
+                    <option value="1">Nam</option>
+                    <option value="2">Nữ</option>
+                </select>
+                <select required class="form-select m-3 w-25" name="guest-type-{{i+1}}" id="guest-type-{{i+1}}" aria-label="Loại khách">
+                    <option value="" selected>Chọn loại khách</option>
+                    <option value="1">Nội địa</option>
+                    <option value="2">Nước ngoài</option>
+                </select>
+                <div class="form-floating m-3 w-100">
+                    <input required type="text" class="form-control" id="identity-number-{{i+1}}" placeholder="Nhập CMND/CCCD"
+                           name="identity-number-{{i+1}}" onchange="checkIdentityNum({{guest_amount}}, {{i+1}})">
+                    <label for="identity-number-{{i+1}}">CMND/CCCD</label>
+                </div>
+                <div class="form-floating m-3 w-100">
+                    <input required type="text" class="form-control" id="address-{{i+1}}" placeholder="Nhập địa chỉ"
+                           name="address-{{i+1}}">
+                    <label for="address-{{i+1}}">Địa chỉ</label>
+                </div>
+                <select onchange="updateAvailable(this)" required class="form-select m-3 w-25 select-room" name="room-{{i+1}}" id="room-{{i+1}}" aria-label="Phòng">
+                    <option value="" selected>Chọn phòng</option>
+                    {% for r in session['cart'].values() %}
+                    {% if r.quantity > 1 %}
+                    {% for i in range(r.quantity) %}
+                    <option rel="{{r.max_people}}" value="{{r.name}}-{{i+1}}">{{r.name}} {{i+1}}</option>
+                    {% endfor %}
+                    {% else %}
+                    <option rel="{{r.max_people}}" value="{{r.name}}-1">{{r.name}}</option>
+                    {% endif %}
+
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% endfor %}
+        </form>
+
+
+    </div>
+    <div class="col-md-3 col-12">
+        <div class="my-bill my-3 " style="border: 1px solid var(--base-color-darker)">
+            <div class="my-bg-3 p-3">
+                <h3 class="font-title">Tổng tiền</h3>
+                <span class="total-quantity">{{total_quantity}} phòng</span>
+                <p class="total-amount">{{ "{:,.0f}".format(total_amount) }} VNĐ</p>
+                <button class="btn w-100 h-100 mx-6 rounded-0 btn-continue d-flex justify-content-between"
+                        onclick="continueBook2({{guest_amount}})"> Tiếp tục
+                    <i class="fa-solid fa-chevron-right my-auto"></i>
+                </button>
+            </div>
+            <div class="px-2" id="list-cart">
+                {% for r in session['cart'].values() %}
+                {% if r.quantity > 1 %}
+                {% for i in range(r.quantity) %}
+                <div class="info-box w-100 p-3 border-bottom d-flex justify-content-between" alt="{{r.name}}-{{i+1}}" rel="{{r.id}}">
+                    <h6 class="room-name font-title fw-bold">{{r.name}} {{i+1}}</h6>
+                    <div class="people-amount">
+                        {% for x in range(r.max_people) %}
+                        <i class="fa-regular fa-user"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="info-box w-100 p-3 border-bottom d-flex justify-content-between" alt="{{r.name}}-1" rel="{{r.id}}">
+                    <h6 class="font-title fw-bold">{{r.name}}</h6>
+                    <div class="people-amount">
+                        {% for x in range(r.max_people) %}
+                        <i class="fa-regular fa-user"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block script%}
+<script src="{{ url_for('static', filename='js/nav2.js') }}"></script>
+<script src="{{ url_for('static', filename='js/details.js') }}"></script>
+
+{% endblock %}

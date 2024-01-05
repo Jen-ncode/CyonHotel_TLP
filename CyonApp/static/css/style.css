@@ -1,0 +1,267 @@
+:root{
+    --main-color: #94A77D;
+    --base-color: #8db8b74a;
+    --main-color-lighter: #C7CFA7;
+    --base-color-darker: #8db8b7;
+    --base-color-darker-a: rgba(19,55,11,0.5);
+    --sub-color: #c5ded0d1;
+
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box !important;
+
+}
+
+html {
+    font-size: 18px;
+}
+
+
+.bg{
+    background-image: url(https://www.porterforhotels.com/upload/heading/get-more-direct-bookings-now-640x500.png);
+    background-size: cover;
+    background-position: center center;
+}
+
+ul.navbar-nav > li.nav-item{
+    font-size: 0.9rem;
+    display: flex;
+}
+
+ul.navbar-nav > li.nav-item > a{
+    margin: auto;
+}
+
+@font-face{
+    font-family: normal;
+    src: url('../src/fonts/Lato Regular.ttf');
+}
+
+@font-face{
+    font-family: sub-title;
+    src: url('../src/fonts/Baiklah.ttf');
+}
+
+@font-face{
+    font-family: title;
+    src: url('../src/fonts/NVNValky-Regular.ttf');
+}
+
+.font-sub-title{
+    font-family: sub-title
+}
+.font-title{
+    font-family: title
+}
+body{
+    font-family: normal !important;
+    background: #fff;
+}
+
+.btn-on-nav{
+    background-color: transparent;
+    --bs-btn-hover-bg: var(--main-color);
+    --bs-btn-hover-border-color: #FFF;
+    --bs-btn-hover-color: #FFF;
+}
+.bg-nav{
+    background-image: linear-gradient(rgba(10,15,25,1), rgba(5,10,15,0.1)) !important;
+    --bs-navbar-color: #FFF;
+}
+.nav-link{
+    --bs-nav-link-hover-color: var(--main-color);
+    --bs-nav-link-font-width: bolder;
+}
+.cls-1{
+    fill: #fff
+}
+.carousel-item{
+    position: relative;
+}
+.overlay-image{
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    opacity: 0.5
+}
+
+.nav-item{
+    padding: 10px;
+}
+
+.booking-table{
+    background: var(--base-color);
+    border-radius: 10px;
+}
+.btn-booking-table{
+    background: var(--base-color-darker);
+}
+
+.btn-booking-table:hover{
+    background: var(--main-color);
+}
+.form-booking{
+    transform: translate(0, +50%)
+}
+
+.form-control{
+    background: transparent;
+    color: #565656;
+    outline: 0;
+}
+
+input::-webkit-calendar-picker-indicator {
+    opacity: 50%;
+}
+
+#collapse-menu{
+    position: absolute;
+    top: 100% !important;
+    transform: translate(-50%, 0)
+}
+.content{
+    margin-top: 90px;
+}
+
+.my-bg{
+    background-color: var(--base-color);
+}
+
+.my-bg-1{
+    background-color: var(--main-color);
+}
+
+.my-bg-2{
+    background-color: var(--main-color-lighter);
+}
+
+.my-bg-3{
+    background-color: var(--sub-color);
+}
+
+.my-bg-4{
+    background-color: var(--base-color-darker) !important;
+}
+
+.my-text-color{
+    color: var(--base-color-darker);
+}
+#account-box{
+    z-index: 2000;
+}
+
+.my-btn{
+    background: var(--base-color);
+}
+
+.my-btn:hover{
+    background: var(--base-color-darker);
+}
+
+.my-sub-btn{
+    border: 1px solid var(--base-color-darker);
+    color: var(--base-color-darker);
+    width: 80%;
+}
+
+.my-sub-btn:hover{
+    background-color: var(--base-color-darker);
+    color: #000;
+}
+
+.my-arrow::after{
+    content: "";
+    position: absolute;
+    border-width: 15px 10px;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent;
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, 0%)
+}
+@media all and (max-width: 992px) {
+   .form-booking{
+        position: relative !important;
+        transform: translate(0, 0%)
+    }
+    .my-nav-expand{
+        background-color: #FFF;
+        width: 100vw;
+        height: 100vh;
+        padding: 30px;
+    }
+    .my-nav-expand li{
+        padding: 10px;
+        border-bottom: 1px solid black;
+    }
+    .my-nav-expand li:hover{
+        background-color: var(--main-color) !important;
+    }
+    .my-nav-expand a{
+        color: black !important;
+        font-size: 1.5rem !important;
+    }
+    #collapse-menu{
+        position: relative !important;
+        width: 100%;
+        transform: translate(0, 0)
+    }
+    .my-search-bar:focus {
+        border: none !important;
+        background-color: white !important;
+        color: black !important
+    }
+    .btn-on-nav{
+        width:100%;
+        height:100%;
+        border: none;
+        border-radius: 0;
+        background-color: var(--base-color) !important;
+    }
+    .btn-on-nav:hover{
+        background-color: var(--main-color) !important;
+    }
+}
+
+.my-hidden-text{
+    display: -webkit-box;
+    height: 70px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.625;
+}
+ }
+      .sign-in-box-left{
+        width: 100%;
+        height: auto;
+        background-image: url(https://www.porterforhotels.com/upload/heading/reporting_1.png);
+        background-size: cover;
+        background-position: center center;
+        border-radius: 0px;
+    }
+    .sign-in-box-right{
+        width: 100%;
+        height: fit-content;
+        border-radius: 10px 10px 0px 0px;
+    }
+}
+
+
+.my-spinner {
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999999999999;
+    position: fixed;
+    background: #000;
+}
+
+.my-spinner div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
