@@ -9,26 +9,28 @@ from flask_login import current_user
 from flask import request
 
 
-class AdminModelView(ModelView):
+class AdminModelView(ModelView): # Xác thực Admin
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.Admin
 
 
-class StaffView(AdminModelView):
-    column_exclude_list = ['password', 'avatar', 'reservations']
+class StaffView(AdminModelView):  # Xem nhân viên
+    column_exclude_list = ['password', 'avatar', 'reservations']   #Danh sách các cột sẽ không được hiển thị
     form_edit_rules = ('name', 'username', 'password', 'email', 'avatar', 'joined_date', 'user_role')
-    form_create_rules = ('name', 'username', 'password', 'email', 'avatar', 'joined_date', 'user_role')
+    form_create_rules = ('name', 'username', 'password', 'email', 'avatar', 'joined_date', 'user_role')    #Các quy tắc cho việc chỉnh sửa và tạo mới
     can_create = True
+
     def get_query(self):
         return self.session.query(self.model).filter(self.model.user_role == UserRole.Staff)
 
 
-class RuleView(BaseView):
+class RuleView(BaseView):  # Xem quy định
     @expose('/')
     def index(self):
         policy = dao.load_policy()
         room_type = dao.load_room_types()
+
         return self.render('admin/rule.html', surcharge=policy['surcharge'], factor=policy['foreigner_factor'],
                            room_type=room_type)
 
@@ -36,7 +38,7 @@ class RuleView(BaseView):
         return current_user.is_authenticated and current_user.user_role == UserRole.Admin
 
 
-class LogOutView(BaseView):
+class LogOutView(BaseView):  #Xem đăng xuất
     @expose('/')
     def index(self):
         logout_user()
@@ -88,7 +90,7 @@ class RoomView(AdminModelView):
 admin = Admin(app=app, name="Cyon Hotel Administration", template_mode="bootstrap4", index_view=MyAdminIndex())
 
 admin.add_view(RuleView(name='Quy định'))
-admin.add_view(RoomTypeView(RoomType, db.session))
-admin.add_view(RoomView(Room, db.session))
+admin.add_view(RoomTypeView(RoomType, db.session, name='Loại phòng'))
+admin.add_view(RoomView(Room, db.session, name='Phòng'))
 admin.add_view(StaffView(User, db.session, name='Nhân viên'))
 admin.add_view(LogOutView(name='Đăng xuất'))

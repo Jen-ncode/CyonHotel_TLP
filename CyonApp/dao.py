@@ -31,44 +31,44 @@ def load_room_types(kw=None, min_price=None, max_price=None, num_of_guests=None,
     if max_price:
         room_types = room_types.filter(RoomType.price <= float(max_price))      #Lọc các loại phòng =< max_price
     if num_of_guests:
-        room_types = room_types.filter(RoomType.max_people >= float(num_of_guests))   #
+        room_types = room_types.filter(RoomType.max_people >= float(num_of_guests))   # Lọc loại phòng có số lượng người tối đa >= num_of_guest
     if id:
-        room_types = room_types.filter(RoomType.id.__eq__(id))
+        room_types = room_types.filter(RoomType.id.__eq__(id))  #Lọc các loại phòng có cùng id
 
     return room_types.all()
 
 
-def get_roomtype_by_id(roomtype_id):
+def get_roomtype_by_id(roomtype_id):        #Lấy danh sách các loại phòng từ CSDL dựa vào id
     return RoomType.query.filter_by(id=roomtype_id).all()
 
 
 def save_reservation(details, date, orderer, rent=None):
-    if details and date and orderer:
+    if details and date and orderer:    #Kiểm tra xem thông tin chi tiết đặt phòng, ngày đặt và thông tin người đặt có tồn tại hay không
         if rent:
             r = Reservation(check_in=date["check-in"], check_out=date["check-out"],
-                            orderer_name=orderer["name"], orderer_email=orderer["email"], did_guests_check_in=True)
+                            orderer_name=orderer["name"], orderer_email=orderer["email"], did_guests_check_in=True)     #Nếu rent tồn tại, tạo một đối tượng Reservation với thông tin ngày nhận phòng, ngày trả phòng, tên và email của người đặt, và đánh dấu rằng khách đã nhận phòng.
         else:
             r = Reservation(check_in=date["check-in"], check_out=date["check-out"],
-                            orderer_name=orderer["name"], orderer_email=orderer["email"], did_guests_check_in=False)
-        db.session.add(r)
-        for d in details.values():
-            room = get_available_room(date["check-in"], date["check-out"], d['room_type_id']).first()
-            rd = ReservationDetails(reservation=r, room_id=room.id, price=d['total'])
-            db.session.add(rd)
-            for g in d['guests'].values():
-                gst = get_guest(g["name"], g["identity_number"], int(g["type"]))
+                            orderer_name=orderer["name"], orderer_email=orderer["email"], did_guests_check_in=False)    #Nếu rent không tồn tại, tạo một đối tượng Reservation tương tự nhưng đánh dấu rằng khách chưa nhận phòng.
+        db.session.add(r)                                                                                        # Thêm đối tượng Reservation vào phiên làm việc của cơ sở dữ liệu.
+        for d in details.values():                                                                               # Duyệt qua tất cả các chi tiết đặt phòng.
+            room = get_available_room(date["check-in"], date["check-out"], d['room_type_id']).first()            # Lấy phòng khả dụng dựa trên ngày nhận phòng, ngày trả phòng và loại phòng.
+            rd = ReservationDetails(reservation=r, room_id=room.id, price=d['total'])                            # Tạo một đối tượng ReservationDetails với thông tin đặt phòng, id phòng và tổng giá.
+            db.session.add(rd)                                                                                   #Thêm đối tượng ReservationDetails vào phiên làm việc của cơ sở dữ liệu.
+            for g in d['guests'].values():                                                                       # Duyệt qua tất cả các khách trong chi tiết đặt phòng.
+                gst = get_guest(g["name"], g["identity_number"], int(g["type"]))                                 # Lấy thông tin khách dựa trên tên, số chứng minh nhân dân và loại khách.
                 if gst:
-                    rdg = ReservationDetailsGuest(reservation_details=rd, guest_id=gst.id)
+                    rdg = ReservationDetailsGuest(reservation_details=rd, guest_id=gst.id)                       # Nếu khách đã tồn tại, tạo một đối tượng ReservationDetailsGuest với thông tin chi tiết đặt phòng và id khách.
                 else:
                     gst = Guest(name=g["name"], gender=g["gender"], identity_number=g["identity_number"],
-                                address=g["address"], guest_type=g["type"])
-                    db.session.add(gst)
-                    rdg = ReservationDetailsGuest(reservation_details=rd, guest=gst)
-                db.session.add(rdg)
+                                address=g["address"], guest_type=g["type"])                                     # Nếu khách chưa tồn tại, tạo một đối tượng Guest với thông tin tên, giới tính, số chứng minh nhân dân, địa chỉ và loại khách.
+                    db.session.add(gst)                                                                         # Thêm đối tượng Guest vào phiên làm việc của cơ sở dữ liệu.
+                    rdg = ReservationDetailsGuest(reservation_details=rd, guest=gst)                            # Tạo một đối tượng ReservationDetailsGuest với thông tin chi tiết đặt phòng và khách.
+                db.session.add(rdg)                                                                             # Thêm đối tượng ReservationDetailsGuest vào phiên làm việc của cơ sở dữ liệu.
         db.session.commit()
 
 
-def get_available_room(start, end, room_type_id):
+def get_available_room(start, end, room_type_id):  #Lọc phòng chưa được đặt (phòng còn trống) có trong time check_in - check_out
     subquery = db.session.query(ReservationDetails.room_id) \
         .join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)) \
         .filter(or_(and_(Reservation.check_in >= start, Reservation.check_in <= end),
@@ -80,7 +80,7 @@ def get_available_room(start, end, room_type_id):
     return query
 
 
-def get_unavailable_room(start, end, room_type_id):
+def get_unavailable_room(start, end, room_type_id):  # Lọc phòng đã được đặt (phòng đã đặt) có trong time check_in - check_out
     subquery = db.session.query(ReservationDetails.room_id) \
         .join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)) \
         .filter(or_(and_(Reservation.check_in >= start, Reservation.check_in <= end),
@@ -92,7 +92,7 @@ def get_unavailable_room(start, end, room_type_id):
     return query
 
 
-def get_guest(name=None, identity_number=None, guest_type=None, id=None):
+def get_guest(name=None, identity_number=None, guest_type=None, id=None):   #Lọc thông tin khách hàng
     guest = Guest.query
     if name:
         guest = guest.filter(Guest.name.__eq__(name))
@@ -108,7 +108,7 @@ def get_guest(name=None, identity_number=None, guest_type=None, id=None):
         return None
 
 
-def revenue_stats_by_month(month):
+def revenue_stats_by_month(month):   # Thống kê doanh thu theo từng loại phòng trong một tháng cụ thể
     query = db.session.query(RoomType.id, RoomType.name, func.sum(ReservationDetails.price)) \
         .join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)) \
         .join(Room, Room.id.__eq__(ReservationDetails.room_id)) \
@@ -120,7 +120,7 @@ def revenue_stats_by_month(month):
     return query.all()
 
 
-def total_by_month(month):
+def total_by_month(month): # Lấy tổng doanh thu các phòng đã đặt trong một tháng
     query = db.session.query(func.sum(ReservationDetails.price)) \
         .join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)) \
         .filter(Reservation.is_pay.__eq__(True)) \
@@ -142,13 +142,14 @@ def frequency_room_type(month):
     return query.all()
 
 
-def total_reservation_details(month):
+def total_reservation_details(month): # Tần suất sử dụng phòng trong các phòng đã đặt phòng đã nận phòng trong 1 tháng
     query = db.session.query(ReservationDetails.id). \
         join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)). \
         filter(Reservation.did_guests_check_in.__eq__(True)). \
         filter(extract('month', Reservation.created_date) == month)
 
     return query.count()
+
 
 
 def get_reservation(check_in=None, check_out=None, orderer_name=None, orderer_email=None, is_pay=None,
@@ -176,7 +177,7 @@ def get_reservation(check_in=None, check_out=None, orderer_name=None, orderer_em
     return query.all()
 
 
-def get_reservation_details(reservation_id=None):
+def get_reservation_details(reservation_id=None):  # Lấy thông tin chi tiết của các phòng đã đặt từ CSDL
     query = db.session.query(ReservationDetails, Room.id, RoomType.name).join(Room, Room.id.__eq__(
         ReservationDetails.room_id)). \
         join(RoomType, RoomType.id.__eq__(Room.room_type_id))
@@ -187,7 +188,7 @@ def get_reservation_details(reservation_id=None):
     return query.all()
 
 
-def get_reservation_details_guests(reservation_details_id=None):
+def get_reservation_details_guests(reservation_details_id=None): # Lấy thông tin chi tiết về khách hàng của các phòng đã đặt phòng từ CSDL
     query = ReservationDetailsGuest.query
 
     if reservation_details_id:
@@ -196,13 +197,13 @@ def get_reservation_details_guests(reservation_details_id=None):
     return query.all()
 
 
-def change_reservation(reservation_id):
+def change_reservation(reservation_id): # Cập nhật trạng thái của 1 phòng đã đặt cụ thể
     r = Reservation.query.filter(Reservation.id.__eq__(reservation_id)).first()
     r.did_guests_check_in = True
     db.session.commit()
 
 
-def paypal_reservation(reservation_id):
+def paypal_reservation(reservation_id): #Cập nhật trạng thái thanh toán các phòng đã đặt
     r = Reservation.query.filter(Reservation.id.__eq__(reservation_id)).first()
     r.is_pay = True
     r.user = current_user
