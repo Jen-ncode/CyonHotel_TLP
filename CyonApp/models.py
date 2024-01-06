@@ -121,16 +121,16 @@ if __name__ == '__main__':
         db.session.commit()
         t1 = RoomType(name="SUPERIOR DOUBLE BED",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2017/06/ICON-DELUXE.jpg",
-                      price=750000, max_people=2)
+                      price=850000, max_people=2)
         t2 = RoomType(name="SUPERIOR TWIN BED",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2019/11/sen4.jpg",
-                      price=960000, max_people=2)
+                      price=1250000, max_people=2)
         t3 = RoomType(name="DELUXE DOUBLE",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2017/06/iCON-SENIOR-DELUXE.jpg",
-                      price=1280000, max_people=3)
+                      price=1680000, max_people=3)
         t4 = RoomType(name="PREMIUM DOUBLE",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2017/06/ICON-PREMIUM.jpg",
-                      price=1950000, max_people=3)
+                      price=1960000, max_people=3)
         db.session.add_all([t1, t2, t3, t4])
         db.session.commit()
 
