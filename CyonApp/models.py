@@ -86,7 +86,7 @@ class Reservation(BaseModel):
     orderer_name = Column(String(50), nullable=False)
     orderer_email = Column(String(100), nullable=False)
     did_guests_check_in = Column(Boolean, nullable=False, default=False)
-    is_paid = Column(Boolean, nullable=False, default=False)
+    is_pay = Column(Boolean, nullable=False, default=False)
     user_id = Column(Integer, ForeignKey(User.id), nullable=True)
     rooms = relationship('ReservationDetails', backref='reservation', lazy=True)
 
@@ -121,16 +121,16 @@ if __name__ == '__main__':
         db.session.commit()
         t1 = RoomType(name="SUPERIOR DOUBLE BED",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2017/06/ICON-DELUXE.jpg",
-                      price=750000, max_people=2)
+                      price=950000, max_people=2)
         t2 = RoomType(name="SUPERIOR TWIN BED",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2019/11/sen4.jpg",
-                      price=960000, max_people=2)
+                      price=1200000, max_people=2)
         t3 = RoomType(name="DELUXE DOUBLE",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2017/06/iCON-SENIOR-DELUXE.jpg",
-                      price=1280000, max_people=3)
+                      price=1560000, max_people=3)
         t4 = RoomType(name="PREMIUM DOUBLE",
                       image="https://iconsaigonhotel.com/wp-content/uploads/2017/06/ICON-PREMIUM.jpg",
-                      price=1950000, max_people=3)
+                      price=2300000, max_people=3)
         db.session.add_all([t1, t2, t3, t4])
         db.session.commit()
 

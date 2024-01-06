@@ -15,49 +15,52 @@ def index():
     check_out = check_in + timedelta(1)
     return render_template('index.html', d1=check_in.strftime('%Y-%m-%d'), d2=check_out.strftime('%Y-%m-%d'))
 
-
+#Hiển thị trang thông tin các phòng cần tìm
 def step1():
     key = app.config['CART_KEY']
     key_date = app.config['DATE_KEY']
 
-    if key not in session:
+    if key not in session: #kiểm tra key có trong session không, nếu không => tạo tạo ds từ điển trong session vs key
         session[key] = {}
 
     today = datetime.now()
-    if key_date not in session:
+    if key_date not in session: #nếu key_date không có trong session => kiểm tra 2 tham số checkin checkout có được truyền vào request kh
         check_in = request.args.get('check-in')
         check_out = request.args.get('check-out')
 
         if check_in == "" or check_in is None:
             check_in = today.strftime('%Y-%m-%d')
         if check_out == "" or check_out is None:
-            check_out = (today + timedelta(1)).strftime('%Y-%m-%d')
-
+            check_out = (today + timedelta(1)).strftime('%Y-%m-%d') #ngày hiện tại + 1 ngày => chuyển đổi thành chuỗi vơi định dạng ngày tháng năm
+        #lưu thông tin checkin checkout vào session với khóa key_date
         session[key_date] = {
             "check-in": check_in,
             "check-out": check_out
         }
-
+    #nếu key_date đã tồn tại trong sesstion, lấy thông tin checkin checkout từ session
     else:
         check_in = session[key_date]["check-in"]
         check_out = session[key_date]["check-out"]
 
-    min_check_out = datetime.strptime(check_in, '%Y-%m-%d')
-    min_check_out += timedelta(1)
-    min_check_out = min_check_out.strftime('%Y-%m-%d')
+    #ngày sau check-in
+    min_check_out = datetime.strptime(check_in, '%Y-%m-%d') #chuyển đổi giá trị checkin thành đối tượng datetime bằng cách sd strptime
+    min_check_out += timedelta(1) #cộng thêm 1 ngày = cách sd timedelta
+    min_check_out = min_check_out.strftime('%Y-%m-%d') #chuyển đổi kết quả thành chuỗi với định dạng ngày tháng năm
 
-    min_check_in = today.strftime('%Y-%m-%d')
-    days = utils.get_num_of_days(session[key_date])
+    min_check_in = today.strftime('%Y-%m-%d') #lấy ngày hiện tại và chuyển đổi thành chuỗi vs định dạng ngày tháng năm
+    days = utils.get_num_of_days(session[key_date]) #lấy số ngày giữa ngày hiện tại và ngày checkout
 
+    #Lấy giá trị truyền vào => giá tiền min max / 1 ngày, từ khóa tìm phòng, số khách
     min_price = int(request.args.get('min-price')) / days if request.args.get('min-price') else None
     max_price = int(request.args.get('max-price')) / days if request.args.get('max-price') else None
     kw = request.args.get('keyword') if request.args.get('keyword') else ""
     num_of_guests = request.args.get('num-of-guests')
     room_types = dao.load_room_types(kw=kw, min_price=min_price, max_price=max_price, num_of_guests=num_of_guests)
 
+    #duyệt qua các phòng trong 1 loại phòng
     for rt in room_types:
-        rt.available = dao.get_available_room(check_in, check_out, rt.id).count()
-    info_cart = utils.cart_stats(session[key])
+        rt.available = dao.get_available_room(check_in, check_out, rt.id).count() #lấy ds phòng có sẵn từ dao trong khoảng tgian checkin-out và đếm số lượng phòng có sẵn
+    info_cart = utils.cart_stats(session[key]) # lấy thông tin thống kê về giỏ hàng từ session hiện tại
     total_quantity = info_cart["total_quantity"]
     total_amount = info_cart["total_amount"]
 
@@ -66,7 +69,7 @@ def step1():
                            total_quantity=total_quantity, total_amount=total_amount, days=days, min_price=min_price,
                            max_price=max_price, kw=kw, num_of_guests=num_of_guests)
 
-
+#Nhập, lấy thông tin đặt phòng của khách hàng với số lượng khách thuê(chi tiết đặt phòng)
 def step2():
     key = app.config['CART_KEY']
     cart = session[key]
@@ -92,7 +95,7 @@ def step2():
     else:
         return redirect("/booking")
 
-
+#xác nhận đặt phòng
 def step3():
     key_details = app.config['DETAILS_KEY']
     if key_details in session:
@@ -393,7 +396,7 @@ def paypal():
         orderer_email = request.args.get('orderer-email') if request.args.get('orderer-email') else ""
 
         reservations = dao.get_reservation(check_in=check_in, check_out=check_out, orderer_name=orderer_name,
-                                           orderer_email=orderer_email, did_guests_check_in=True, is_paid=False)
+                                           orderer_email=orderer_email, did_guests_check_in=True, is_pay=False)
         for rs in reservations:
             t = 0
             for ds in rs.rooms:
