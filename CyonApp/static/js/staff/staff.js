@@ -28,7 +28,7 @@ function paypal(reservation_id) {
             }
         }).then(res => res.json()).then((data) => {
             alert("Thành công")
-            window.location = 'staff/booking'
+            window.location = '/staff/paypal'
         })
     }
 }

@@ -17,7 +17,7 @@
             <div class="h1 display-6 font-title text-start text-uppercase fw-bold mt-4">{{rooms[i].name}}</div>
             <p class="m-0"><i class="fa-solid fa-user-group"></i> : 1-{{rooms[i].max_people}} khách</p>
             <p class="m-0"><i class="fa-solid fa-wallet"></i> : {{ "{:,.0f}".format(rooms[i].price) }} VNĐ/ngày</p>
-            <p class="p-2 my-hidden-text">{{rooms[i].description}}</p>
+            <div class="p-2 my-hidden-text">{{rooms[i].description}}</div>
             <a href="/rooms-suites/{{rooms[i].id}}" class="btn w-25 border border-1 border-dark rounded-0 d-flex justify-content-center">Chi tiết <i class="fa-solid fa-chevron-right my-auto mx-2"></i></a>
         </div>
         <div class="col-lg-5 col-sm-12 p-0">
@@ -43,7 +43,8 @@
             <div class="h1 display-6 font-title text-start text-uppercase fw-bold mt-4">{{rooms[i].name}}</div>
             <p class="m-0"><i class="fa-solid fa-user-group"></i> : 1-{{rooms[i].max_people}} khách</p>
             <p class="m-0"><i class="fa-solid fa-wallet"></i> : {{ "{:,.0f}".format(rooms[i].price) }} VNĐ/ngày</p>
-            <p class="p-2 my-hidden-text">{{rooms[i].description}}</p>
+            <div class="p-2 my-hidden-text">{{rooms[i].description}}</div>
+
             <a href="/rooms-suites/{{rooms[i].id}}" class="btn col-12 col-md-3 border border-1 border-white text-white rounded-0 d-flex justify-content-center">Chi tiết <i class="fa-solid fa-chevron-right my-auto mx-2"></i></a>
         </div>
     </div>

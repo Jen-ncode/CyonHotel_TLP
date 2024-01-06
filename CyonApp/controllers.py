@@ -109,7 +109,7 @@ def rooms_suites():
 
 def rooms_suites_details(roomType_id):
     rt = dao.load_room_types(id=roomType_id)
-    return render_template("room_details.html", rooms=rt)
+    return render_template("rooms_details.html", rooms=rt)
 
 
 def staff_login():
