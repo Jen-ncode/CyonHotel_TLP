@@ -25,7 +25,7 @@ def save_policy(data):      #Lưu tập JSON
 def load_room_types(kw=None, min_price=None, max_price=None, num_of_guests=None, id=None):
     room_types = RoomType.query     #Lấy phòng từ CSDL
     if kw:
-        room_types = room_types.filter(RoomType.name.contains(kw))      #Lọc các loại phòng có tên kw
+        room_types = room_types.filter(RoomType.name.contains(kw))    #Lọc các loại phòng có tên kw
     if min_price:
         room_types = room_types.filter(RoomType.price >= float(min_price))      #Lọc các loại phòng >= min_price
     if max_price:
@@ -113,7 +113,7 @@ def revenue_stats_by_month(month):
         .join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)) \
         .join(Room, Room.id.__eq__(ReservationDetails.room_id)) \
         .join(RoomType, RoomType.id.__eq__(Room.room_type_id)) \
-        .filter(Reservation.is_paid.__eq__(True)) \
+        .filter(Reservation.is_pay.__eq__(True)) \
         .filter(extract('month', Reservation.created_date) == month) \
         .group_by(RoomType.id, RoomType.name)
 
@@ -123,7 +123,7 @@ def revenue_stats_by_month(month):
 def total_by_month(month):
     query = db.session.query(func.sum(ReservationDetails.price)) \
         .join(Reservation, Reservation.id.__eq__(ReservationDetails.reservation_id)) \
-        .filter(Reservation.is_paid.__eq__(True)) \
+        .filter(Reservation.is_pay.__eq__(True)) \
         .filter(extract('month', Reservation.created_date) == month)
 
     return query.first()
@@ -151,7 +151,7 @@ def total_reservation_details(month):
     return query.count()
 
 
-def get_reservation(check_in=None, check_out=None, orderer_name=None, orderer_email=None, is_paid=None,
+def get_reservation(check_in=None, check_out=None, orderer_name=None, orderer_email=None, is_pay=None,
                     did_guests_check_in=None, id=None):
     query = Reservation.query
     if check_in:
@@ -162,10 +162,10 @@ def get_reservation(check_in=None, check_out=None, orderer_name=None, orderer_em
         query = query.filter(Reservation.orderer_name.contains(orderer_name))
     if orderer_email:
         query = query.filter(Reservation.orderer_email.contains(orderer_email))
-    if is_paid is not None and is_paid == False:
-        query = query.filter(Reservation.is_paid.__eq__(False))
-    if is_paid is not None and is_paid == True:
-        query = query.filter(Reservation.is_paid.__eq__(True))
+    if is_pay is not None and is_pay == False:
+        query = query.filter(Reservation.is_pay.__eq__(False))
+    if is_pay is not None and is_pay == True:
+        query = query.filter(Reservation.is_pay.__eq__(True))
     if did_guests_check_in is not None and did_guests_check_in == False:
         query = query.filter(Reservation.did_guests_check_in.__eq__(False))
     if did_guests_check_in is not None and did_guests_check_in == True:
@@ -204,6 +204,6 @@ def change_reservation(reservation_id):
 
 def paypal_reservation(reservation_id):
     r = Reservation.query.filter(Reservation.id.__eq__(reservation_id)).first()
-    r.is_paid = True
+    r.is_pay = True
     r.user = current_user
     db.session.commit()
