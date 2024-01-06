@@ -3,20 +3,20 @@ from datetime import datetime
 from CyonApp import db
 from CyonApp.models import User, UserRole
 
-#tính toán thống kê về giỏ hàng và trả về một ds chứa tổng số lượng và tổng giá trị của các mục trong giỏ hàng
+
 def cart_stats(cart):
     total_amount, total_quantity = 0, 0
     if cart:
         for c in cart.values():
-            total_quantity += c['quantity'] #cộng dồn số lượng
-            total_amount += c['quantity'] * c['price'] #cộng dồn giá mỗi mục
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
 
     return {
         'total_amount': total_amount,
         'total_quantity': total_quantity
     }
 
-#Hàm trả về số ngày dựa vào ngày checkin - checkout truyền vào
+
 def get_num_of_days(date):
     num_of_days = 0
     if date:
@@ -26,7 +26,7 @@ def get_num_of_days(date):
 
     return num_of_days
 
-#tính tổng giá tiền đơn đặt phòng
+
 def get_total(details):
     total = 0
     if details:
@@ -46,7 +46,7 @@ def add_user(name, username, password, **kwargs):
     db.session.add(user)
     db.session.commit()
 
-#xác thực, kiểm tra người dùng
+
 def check_login(username, password, role=UserRole):
     if username and password:
         password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())

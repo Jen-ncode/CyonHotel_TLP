@@ -25,7 +25,7 @@ def save_policy(data):      #Lưu tập JSON
 def load_room_types(kw=None, min_price=None, max_price=None, num_of_guests=None, id=None):
     room_types = RoomType.query     #Lấy phòng từ CSDL
     if kw:
-        room_types = room_types.filter(RoomType.name.contains(kw))    #Lọc các loại phòng có tên kw
+        room_types = room_types.filter(RoomType.name.contains(kw))      #Lọc các loại phòng có tên kw
     if min_price:
         room_types = room_types.filter(RoomType.price >= float(min_price))      #Lọc các loại phòng >= min_price
     if max_price:
@@ -151,9 +151,8 @@ def total_reservation_details(month): # Tần suất sử dụng phòng trong c�
     return query.count()
 
 
-
 def get_reservation(check_in=None, check_out=None, orderer_name=None, orderer_email=None, is_pay=None,
-                    did_guests_check_in=None, id=None):
+                    did_guests_check_in=None, id=None):  #Tìm kiếm thông tin các phòng đã đặt từ cơ sở dữ liệu dựa trên các tiêu chí tìm kiếm
     query = Reservation.query
     if check_in:
         query = query.filter(Reservation.check_in.__eq__(check_in))
