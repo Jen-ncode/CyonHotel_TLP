@@ -5,7 +5,7 @@ from flask_login import LoginManager
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%s@localhost/cyondb?charset=utf8mb4' % quote('Abc123')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%s@localhost/cyondb?charset=utf8mb4' % quote('Abcd1234')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.secret_key = '4567890sdfghjklcvbnvb4567fg6yug'
 
