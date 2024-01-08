@@ -95,9 +95,8 @@ def step2():
 #Xuất tổng tiền đơn đặt phòng và thông tin khách hàng
 def step3():
     key_details = app.config['DETAILS_KEY']
-    key_date = app.config['DATE_KEY']
     if key_details in session:
-        total_bill = utils.get_total(session[key_details])*utils.get_num_of_days(session[key_date])
+        total_bill = utils.get_total(session[key_details])
         return render_template('booking/confirm.html', total=total_bill)
     else:
         return redirect("/booking")
