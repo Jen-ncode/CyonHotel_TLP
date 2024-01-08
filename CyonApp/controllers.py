@@ -92,11 +92,12 @@ def step2():
     else:
         return redirect("/booking")
 
-
+#Xuất tổng tiền đơn đặt phòng và thông tin khách hàng
 def step3():
     key_details = app.config['DETAILS_KEY']
+    key_date = app.config['DATE_KEY']
     if key_details in session:
-        total_bill = utils.get_total(session[key_details])
+        total_bill = utils.get_total(session[key_details])*utils.get_num_of_days(session[key_date])
         return render_template('booking/confirm.html', total=total_bill)
     else:
         return redirect("/booking")
@@ -516,10 +517,11 @@ def staff_choose_room(room_index):
     session[key_d] = d
     return jsonify(True)
 
-
+# XUẤT TỔNG TIỀN ĐƠN ĐẶT PHÒNG
 def staff_confirm_room(room_index):
     data = request.json
     key_d = app.config['S_DETAILS_KEY']
+    key_i = app.config['S_INFO_KEY'] #lấy thông tin ngày checkin-checkout
     if key_d not in session or room_index not in session[key_d]:
         return jsonify()
 
@@ -541,7 +543,7 @@ def staff_confirm_room(room_index):
         details[room_index]["surcharge"] = price * float(policy["surcharge"])
 
     if "foreigner" in details[room_index]:
-        price = price * float(details[room_index]["foreigner"])
+        price = price * float(details[room_index]["foreigner"]) * utils.get_num_of_days(session[key_i])   #tổng giá = giá phòng *hệ số khách nước ngoài * số ngày thuê
 
     if "surcharge" in details[room_index]:
         price += float(details[room_index]["surcharge"])
