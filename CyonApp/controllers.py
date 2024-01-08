@@ -113,57 +113,6 @@ def rooms_suites_details(roomType_id):
     return render_template("rooms_details.html", rooms=rt)
 
 
-def staff_login():
-    err_msg = ''
-    if request.method.__eq__('POST'):
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        user = utils.check_login(username=username, password=password, role=UserRole.Staff)
-        if user:
-            login_user(user=user)
-            return redirect('/staff')
-        else:
-            err_msg = 'Tài khoản hoặc mật khẩu của bạn không chính xác, vui lòng nhập lại'
-
-    return render_template("staff/login.html", err_msg=err_msg)
-
-
-def staff():
-    if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
-        return render_template('staff/staff.html')
-    else:
-        return redirect('/login')
-
-
-def signin_admin():
-    if request.method.__eq__('POST'):
-        username = request.form['username']
-        password = request.form['password']
-        user = utils.check_login(username=username,
-                                 password=password,
-                                 role=UserRole.Admin)
-        if user:
-            login_user(user=user)
-            return redirect('/admin')
-        else:
-            err_msg = "Tài khoản không tồn tại, vui lòng thử lại"
-    return redirect('/admin')
-
-
-def change_rule():
-    if request.method.__eq__('POST'):
-        surcharge = request.form['surcharge']
-        factor = request.form['factor']
-
-        rule = {
-            "foreigner_factor": factor,
-            "surcharge": surcharge
-        }
-
-        dao.save_policy(rule)
-
-    return redirect('/admin/rule')
 
 
 def update_date():
@@ -349,73 +298,34 @@ def verify_email():
         params={'email': email}).json()['status'])
 
 
-def rent():
+
+def staff_login():
+    err_msg = ''
+    if request.method.__eq__('POST'):
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = utils.check_login(username=username, password=password, role=UserRole.Staff)
+        if user:
+            login_user(user=user)
+            return redirect('/staff')
+        else:
+            err_msg = 'Tài khoản hoặc mật khẩu của bạn không chính xác, vui lòng nhập lại'
+
+    return render_template("staff/login.html", err_msg=err_msg)
+
+
+def staff():
     if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
-        return render_template('staff/rent.html')
+        return render_template('staff/staff.html')
     else:
         return redirect('/login')
-
-
-def reservations_to_rent():
-    if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
-        check_in = request.args.get('check-in') if request.args.get('check-in') else ""
-        check_out = request.args.get('check-out') if request.args.get('check-out') else ""
-
-        orderer_name = request.args.get('orderer-name') if request.args.get('orderer-name') else ""
-        orderer_email = request.args.get('orderer-email') if request.args.get('orderer-email') else ""
-
-        reservations = dao.get_reservation(check_in=check_in, check_out=check_out, orderer_name=orderer_name,
-                                           orderer_email=orderer_email, did_guests_check_in=False)
-        for rs in reservations:
-            t = 0
-            for ds in rs.rooms:
-                t += ds.price
-            rs.total = t
-
-        return render_template('staff/reservations.html', r=reservations, check_in=check_in, check_out=check_out,
-                               orderer_name=orderer_name, orderer_email=orderer_email, total=total)
-
-    else:
-        return redirect('/login')
-
-
-def change_reservation(reservation_id):
-    dao.change_reservation(reservation_id)
-
-    return jsonify()
-
-
-def paypal():
-    if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
-        check_in = request.args.get('check-in') if request.args.get('check-in') else ""
-        check_out = request.args.get('check-out') if request.args.get('check-out') else ""
-
-        orderer_name = request.args.get('orderer-name') if request.args.get('orderer-name') else ""
-        orderer_email = request.args.get('orderer-email') if request.args.get('orderer-email') else ""
-
-        reservations = dao.get_reservation(check_in=check_in, check_out=check_out, orderer_name=orderer_name,
-                                           orderer_email=orderer_email, did_guests_check_in=True, is_pay=False)
-        for rs in reservations:
-            t = 0
-            for ds in rs.rooms:
-                t += ds.price
-            rs.total = t
-
-        return render_template('staff/paypal.html', r=reservations, check_in=check_in, check_out=check_out,
-                               orderer_name=orderer_name, orderer_email=orderer_email, total=total)
-
-    else:
-        return redirect('/login')
-
-
-def pay_reservation(reservation_id):
-    dao.paypal_reservation(reservation_id)
-    return jsonify()
-
+        
 
 def staff_logoff():
     logout_user()
     return jsonify()
+
 
 
 def hash_pass():
@@ -424,6 +334,16 @@ def hash_pass():
     password = data['password']
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     return jsonify(password)
+
+
+
+#Cập nhật trạng thái 
+def change_reservation(reservation_id):
+    dao.change_reservation(reservation_id)
+
+    return jsonify()
+
+
 
 
 def staff_booking():
@@ -486,6 +406,21 @@ def add_room():
     return jsonify(a)
 
 
+
+def staff_cancel():
+    key_d = app.config['S_DETAILS_KEY']
+    key_i = app.config['S_INFO_KEY']
+
+    if key_d in session:
+        del session[key_d]
+
+    if key_i in session:
+        del session[key_i]
+
+    return jsonify()
+
+
+
 def staff_room_details(room_index):
     key_i = app.config['S_INFO_KEY']
     if key_i not in session:
@@ -516,6 +451,8 @@ def staff_choose_room(room_index):
     d[room_index] = data['data']
     session[key_d] = d
     return jsonify(True)
+
+
 
 # XUẤT TỔNG TIỀN ĐƠN ĐẶT PHÒNG
 def staff_confirm_room(room_index):
@@ -555,29 +492,8 @@ def staff_confirm_room(room_index):
     return jsonify(session[key_d])
 
 
-def staff_del_room(room_index):
-    key_d = app.config['S_DETAILS_KEY']
-    if key_d not in session or room_index not in session[key_d]:
-        return jsonify()
 
-    details = session[key_d]
-    for i in range(int(room_index), len(details)):
-        details[str(i)] = details[str(i + 1)]
-
-    del details[str(len(details))]
-
-    session[key_d] = details
-
-    key_i = app.config['S_INFO_KEY']
-    if key_i not in session:
-        return jsonify()
-
-    temp = session[key_i]
-    temp['amount_rooms'] = len(details)
-
-    return jsonify(True)
-
-
+#Lập đơn đặt phòng
 def staff_confirm_book():
     key_d = app.config['S_DETAILS_KEY']
     key_i = app.config['S_INFO_KEY']
@@ -607,6 +523,7 @@ def staff_confirm_book():
     return jsonify({'status': 'success'})
 
 
+#Lập phiếu thuê
 def staff_confirm_rent():
     key_d = app.config['S_DETAILS_KEY']
     key_i = app.config['S_INFO_KEY']
@@ -636,14 +553,119 @@ def staff_confirm_rent():
     return jsonify({'status': 'success'})
 
 
-def staff_cancel():
-    key_d = app.config['S_DETAILS_KEY']
-    key_i = app.config['S_INFO_KEY']
 
-    if key_d in session:
-        del session[key_d]
 
-    if key_i in session:
-        del session[key_i]
+def rent():
+    if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
+        return render_template('staff/rent.html')
+    else:
+        return redirect('/login')
 
+
+def reservations_to_rent():
+    if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
+        check_in = request.args.get('check-in') if request.args.get('check-in') else ""
+        check_out = request.args.get('check-out') if request.args.get('check-out') else ""
+
+        orderer_name = request.args.get('orderer-name') if request.args.get('orderer-name') else ""
+        orderer_email = request.args.get('orderer-email') if request.args.get('orderer-email') else ""
+
+        reservations = dao.get_reservation(check_in=check_in, check_out=check_out, orderer_name=orderer_name,
+                                           orderer_email=orderer_email, did_guests_check_in=False)
+        for rs in reservations:
+            t = 0
+            for ds in rs.rooms:
+                t += ds.price
+            rs.total = t
+
+        return render_template('staff/reservations.html', r=reservations, check_in=check_in, check_out=check_out,
+                               orderer_name=orderer_name, orderer_email=orderer_email, total=total)
+
+    else:
+        return redirect('/login')
+
+
+
+def paypal():
+    if current_user.is_authenticated and current_user.user_role == UserRole.Staff:
+        check_in = request.args.get('check-in') if request.args.get('check-in') else ""
+        check_out = request.args.get('check-out') if request.args.get('check-out') else ""
+
+        orderer_name = request.args.get('orderer-name') if request.args.get('orderer-name') else ""
+        orderer_email = request.args.get('orderer-email') if request.args.get('orderer-email') else ""
+
+        reservations = dao.get_reservation(check_in=check_in, check_out=check_out, orderer_name=orderer_name,
+                                           orderer_email=orderer_email, did_guests_check_in=True, is_pay=False)
+        for rs in reservations:
+            t = 0
+            for ds in rs.rooms:
+                t += ds.price
+            rs.total = t
+
+        return render_template('staff/paypal.html', r=reservations, check_in=check_in, check_out=check_out,
+                               orderer_name=orderer_name, orderer_email=orderer_email, total=total)
+
+    else:
+        return redirect('/login')
+
+
+def pay_reservation(reservation_id):
+    dao.paypal_reservation(reservation_id)
     return jsonify()
+
+
+
+def staff_del_room(room_index):
+    key_d = app.config['S_DETAILS_KEY']
+    if key_d not in session or room_index not in session[key_d]:
+        return jsonify()
+
+    details = session[key_d]
+    for i in range(int(room_index), len(details)):
+        details[str(i)] = details[str(i + 1)]
+
+    del details[str(len(details))]
+
+    session[key_d] = details
+
+    key_i = app.config['S_INFO_KEY']
+    if key_i not in session:
+        return jsonify()
+
+    temp = session[key_i]
+    temp['amount_rooms'] = len(details)
+
+    return jsonify(True)
+
+
+
+
+
+def signin_admin():
+    if request.method.__eq__('POST'):
+        username = request.form['username']
+        password = request.form['password']
+        user = utils.check_login(username=username,
+                                 password=password,
+                                 role=UserRole.Admin)
+        if user:
+            login_user(user=user)
+            return redirect('/admin')
+        else:
+            err_msg = "Tài khoản không tồn tại, vui lòng thử lại"
+    return redirect('/admin')
+
+
+def change_rule():
+    if request.method.__eq__('POST'):
+        surcharge = request.form['surcharge']
+        factor = request.form['factor']
+
+        rule = {
+            "foreigner_factor": factor,
+            "surcharge": surcharge
+        }
+
+        dao.save_policy(rule)
+
+    return redirect('/admin/rule')
