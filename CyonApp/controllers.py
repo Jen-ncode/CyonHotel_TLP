@@ -479,7 +479,7 @@ def staff_confirm_room(room_index):
         details[room_index]["surcharge"] = price * float(policy["surcharge"])
 
     if "foreigner" in details[room_index]:
-        price = price * float(details[room_index]["foreigner"]) * utils.get_num_of_days(session[key_i])   #tổng giá = giá phòng *hệ số khách nước ngoài * số ngày thuê
+        price = price * float(details[room_index]["foreigner"]) 
 
     if "surcharge" in details[room_index]:
         price += float(details[room_index]["surcharge"])
